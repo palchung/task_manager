@@ -9,7 +9,7 @@ import os
 from datetime import datetime, date
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
-# === Variables ===
+# ===== Variables =====
 default_account = "admin;password"
 user_file = "./user.txt"
 task_file = "./tasks.txt"
@@ -19,6 +19,17 @@ today = datetime.today()
 logged_in = False
 return_previous_menu = False
 
+# ===== Custom Exception =====
+
+
+# custom exception for assigning a task to non-exist user.
+class UserExist(Exception):
+    pass
+
+
+# custom exception for editing a completed task
+class TaskCompleted(Exception):
+    pass
 
 # ===== helper functions =====
 
@@ -191,9 +202,7 @@ def edit_task(task, mark_as_completed, task_file, username_password):
 
     # if user edit a task
     else:
-        # custom exception for assigning a task to non-exist user.
-        class UserExist(Exception):
-            pass
+
         # check if user name exist.
         while True:
             try:
@@ -210,10 +219,10 @@ def edit_task(task, mark_as_completed, task_file, username_password):
             except UserExist:
                 print("Username is not found. Please enter another username")
 
+        task_due_date = input("New due date of task (YYYY-MM-DD): ")
+
         while True:
             try:
-                task_due_date = input("New due date of task (YYYY-MM-DD): ")
-
                 if task_due_date == "":
                     new_due_date = task['due_date']
 
@@ -222,7 +231,6 @@ def edit_task(task, mark_as_completed, task_file, username_password):
                         task_due_date, DATETIME_STRING_FORMAT)
 
                 break
-
             except ValueError:
                 print("Invalid datetime format. Please use the format specified")
 
@@ -324,8 +332,10 @@ def reg_user(username_password, user_file):
 # - A title of a task,
 # - A description of the task and
 # - the due date of the task.
-def add_task(username_password, task_list, task_file):
+def add_task(username_password, task_file):
 
+    # Get all tasks from tasks.txt
+    task_list = get_all_tasks_from(task_file)
     while True:
         try:
             task_username = input("Name of person assigned to task: ")
@@ -337,6 +347,7 @@ def add_task(username_password, task_list, task_file):
 
     task_title = input("Title of Task: ")
     task_description = input("Description of Task: ")
+
     while True:
         try:
             task_due_date = input("Due date of task (YYYY-MM-DD): ")
@@ -381,7 +392,9 @@ def add_task(username_password, task_list, task_file):
 # Reads the task from task.txt file and prints to the console in the
 # format of Output 2 presented in the task pdf (i.e. includes spacing
 # and labelling)
-def view_all(task_list):
+def view_all():
+    # Always get tasks from file to ensure data consistancy.
+    task_list = get_all_tasks_from(task_file)
     print(f"\n=== All Tasks ===\n")
     for t in task_list:
         show_tasks(t)
@@ -394,9 +407,6 @@ def view_all(task_list):
 def view_mine(task_file, curr_user):
     task_new_list = []
     match = False
-
-    class TaskCompleted(Exception):
-        pass
 
     task_list = get_all_tasks_from(task_file)
     print(f"\n=== Your assigned Task ===\n")
@@ -501,16 +511,11 @@ while logged_in:
 
     elif menu == 'a':
         # Add task into task.txt file
-        # Get all tasks from tasks.txt
-        task_list = get_all_tasks_from(task_file)
-        add_task(username_password, task_list, task_file)
+        add_task(username_password, task_file)
 
     elif menu == 'va':
         # View all tasks
-
-        # Always get tasks from file to ensure data consistancy.
-        task_list = get_all_tasks_from(task_file)
-        view_all(task_list)
+        view_all()
 
     elif menu == 'vm':
         # View a user task
@@ -520,23 +525,21 @@ while logged_in:
                 break
 
     elif menu == 'gr':
-
         # Generate both tasks and user txt files
         generate_overview_files(task_file, user_file)
 
-    elif menu == 'ds' and curr_user == 'admin':
+    elif menu == 'ds':
         # If the user is an admin they can display statistics about number of users
         # and tasks.
+        if curr_user == 'admin':
+            # Generate both tasks and user txt files
+            generate_overview_files(task_file, user_file)
 
-        # Generate both tasks and user txt files
-        generate_overview_files(task_file, user_file)
-
-        # Display tasks statistic data from txt files
-        show_statistic(task_overview_file)
-        show_statistic(user_overview_file)
-
-    elif menu == 'ds' and curr_user != 'admin':
-        print("You have no right to view tasks and user statistic.")
+            # Display tasks statistic data from txt files
+            show_statistic(task_overview_file)
+            show_statistic(user_overview_file)
+        else:
+            print("You have no right to view tasks and user statistic.")
 
     elif menu == 'e':
         print('Goodbye!!!')
