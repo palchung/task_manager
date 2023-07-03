@@ -1,0 +1,14 @@
+
+======= User Overview =======
+
+Total number of users : 			 2
+
+User : 						 admin
+Total number of tasks assigned : 		 0
+
+User : 						 pal
+Total number of tasks assigned : 		 1
+Percentage of tasks assigned : 			 100.0
+Percentage of completed tasks assigned : 	 0.0
+Percentage of incompleted tasks assigned : 	 100.0
+Percentage of incompleted overdued tasks : 	 0.0

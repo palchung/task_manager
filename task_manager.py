@@ -76,8 +76,21 @@ def replace_text_in_file(file, text_to_search, replacement_text):
 
 # === functions ===
 
+# generate both tasks and users overview file
+def generate_overview_files(task_file, user_file):
+    # Always genrate task_overview.txt and user_overview.txt from files, even they are already exist
+    # This can keep data updated during user using the application.
+    task_list = get_all_tasks_from(task_file)
+
+    # generate task_overview.txt
+    generate_task_overview(task_overview_file, task_list)
+
+    # generate user_overview.txt
+    generate_user_overview(user_file, user_overview_file, task_list)
 
 # Generate task overview file
+
+
 def generate_task_overview(task_overview_file, task_list):
     completed_num = uncompleted_num = uncompleted_and_overdue = 0
 
@@ -108,7 +121,7 @@ def generate_task_overview(task_overview_file, task_list):
     # create report and save as file
     output_report(task_overview_file, report)
 
-    return task_list
+    return
 
 
 # Generate user overview file
@@ -508,29 +521,15 @@ while logged_in:
 
     elif menu == 'gr':
 
-        # Always genrate task_overview.txt and user_overview.txt from files, even they are already exist
-        # This can keep data updated during user using the application.
-        task_list = get_all_tasks_from(task_file)
-
-        # generate task_overview.txt
-        generate_task_overview(task_overview_file, task_list)
-
-        # generate user_overview.txt
-        generate_user_overview(user_file, user_overview_file, task_list)
+        # Generate both tasks and user txt files
+        generate_overview_files(task_file, user_file)
 
     elif menu == 'ds' and curr_user == 'admin':
         # If the user is an admin they can display statistics about number of users
         # and tasks.
 
-        # Always genrate task_overview.txt and user_overview.txt from files, even they are already exist
-        # This can keep data updated during user using the application.
-        task_list = get_all_tasks_from(task_file)
-
-        # generate task_overview.txt
-        generate_task_overview(task_overview_file, task_list)
-
-        # generate user_overview.txt
-        generate_user_overview(user_file, user_overview_file, task_list)
+        # Generate both tasks and user txt files
+        generate_overview_files(task_file, user_file)
 
         # Display tasks statistic data from txt files
         show_statistic(task_overview_file)
