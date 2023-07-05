@@ -1,9 +1,0 @@
-
-======= Task Overview =======
-
-Total number of tasks: 				 1
-Total number of completed tasks: 		 0
-Total number of uncompleted tasks: 		 1
-Total number of overdue tasks: 			 1
-Percentage of incompleted tasks: 		 100.0%
-Percentage of overdued tasks: 			 100.0%
