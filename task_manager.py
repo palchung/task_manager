@@ -4,7 +4,6 @@
 # password: password
 
 # ===== importing libraries =====
-import fileinput
 import os
 from datetime import datetime, date
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
@@ -35,10 +34,11 @@ class TaskCompleted(Exception):
 
 
 # Show overview file content
-def show_statistic(file):
-    with open(file) as f:
-        for line in f:
-            print(line.strip())
+def show_statistic(files):
+    for file in files:
+        with open(file) as f:
+            for line in f:
+                print(line.strip())
 
 
 # create a report and save as file
@@ -99,9 +99,8 @@ def generate_overview_files(task_file, user_file):
     # generate user_overview.txt
     generate_user_overview(user_file, user_overview_file, task_list)
 
+
 # Generate task overview file
-
-
 def generate_task_overview(task_overview_file, task_list):
     completed_num = uncompleted_num = uncompleted_and_overdue = 0
 
@@ -419,7 +418,7 @@ def view_mine(task_file, curr_user):
     while True:
         try:
             task_num = int(input(
-                "Which task do you want to view ? (please input the task reference number, or '-1' return to previous menu) "))
+                f'Which task do you want to view ? \nplease input the task reference number, \nor "-1" return to previous menu: '))
 
             if task_num == -1:
                 return True
@@ -431,8 +430,8 @@ def view_mine(task_file, curr_user):
                     print("\n=== You selected following task to edit. ===\n")
                     show_tasks(curr_t)
 
-                    action = int(
-                        input(f"Would you like to ?\n1 - mark the task as complete\n2 - edit the task\n: "))
+                    action = int(input(
+                        f'Would you like to ?\n1 - mark the task as complete\n2 - edit the task: '))
                     if action == 1:
                         curr_t['completed'] = True
                         edit_task(
@@ -536,8 +535,8 @@ while logged_in:
             generate_overview_files(task_file, user_file)
 
             # Display tasks statistic data from txt files
-            show_statistic(task_overview_file)
-            show_statistic(user_overview_file)
+            show_statistic([task_overview_file, user_overview_file])
+
         else:
             print("You have no right to view tasks and user statistic.")
 
